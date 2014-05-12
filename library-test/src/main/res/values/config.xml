@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string name="apiClientClassName">net.ut11.ccmp.lib.TestApiClient</string>
+</resources>

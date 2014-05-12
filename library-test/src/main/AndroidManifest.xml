@@ -1,0 +1,35 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="net.ut11.ccmp.lib.test">
+
+	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+	<uses-permission android:name="android.permission.INTERNET" />
+	<uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+
+	<permission android:name="net.ut11.ccmp.test.permission.C2D_MESSAGE" android:protectionLevel="signature" />
+	<uses-permission android:name="net.ut11.ccmp.test.permission.C2D_MESSAGE" />
+
+    <application android:name="net.ut11.ccmp.lib.LibApp">
+
+		<receiver
+			android:name="net.ut11.ccmp.lib.net.gcm.GcmBroadcastReceiver"
+			android:permission="com.google.android.c2dm.permission.SEND">
+
+			<intent-filter>
+				<action android:name="com.google.android.c2dm.intent.RECEIVE" />
+				<category android:name="net.ut11.ccmp.test" />
+			</intent-filter>
+		</receiver>
+
+		<receiver android:name="net.ut11.ccmp.lib.receiver.MessageReceiverService$MessageReceiver" android:enabled="false">
+			<intent-filter android:priority="200">
+				<action android:name="android.provider.Telephony.SMS_RECEIVED" />
+			</intent-filter>
+		</receiver>
+
+		<service android:name="net.ut11.ccmp.lib.net.gcm.GcmIntentService" />
+
+		<meta-data
+			android:name="com.google.android.gms.version"
+			android:value="@integer/google_play_services_version" />
+	</application>
+</manifest>

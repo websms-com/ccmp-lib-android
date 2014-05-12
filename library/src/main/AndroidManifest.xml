@@ -1,0 +1,5 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="net.ut11.ccmp.lib">
+
+    <application android:name=".LibApp" />
+</manifest>

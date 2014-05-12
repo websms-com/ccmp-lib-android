@@ -1,0 +1,85 @@
+apply plugin: 'android-library'
+apply plugin: 'checkstyle'
+apply plugin: 'findbugs'
+apply plugin: 'pmd'
+apply plugin: 'maven'
+
+group = 'net.ut11.ccmp'
+archivesBaseName = 'ccmp-lib'
+version = '1.1.0-SNAPSHOT'
+
+buildscript {
+	repositories {
+		mavenCentral()
+	}
+	dependencies {
+		classpath 'com.android.tools.build:gradle:0.9.+'
+	}
+}
+
+android {
+	compileSdkVersion 19
+	buildToolsVersion "19.0.3"
+
+	defaultConfig {
+		minSdkVersion 10
+		targetSdkVersion 19
+		versionName = version
+	}
+
+    lintOptions {
+        abortOnError false
+        absolutePaths false
+        lintConfig file("lint.xml")
+    }
+}
+
+dependencies {
+	compile 'com.google.android.gms:play-services:4.3.+'
+	compile 'com.android.support:support-v4:19.1.+'
+	compile files('libs/ccmp-client.jar')
+    compile files('libs/disklrucache-2.0.2.jar')
+}
+
+if (!hasProperty('uploadRepositoryUri')) project.ext.uploadRepositoryUri = ''
+if (!hasProperty('uploadSnapshotRepositoryUri')) project.ext.uploadSnapshotRepositoryUri = ''
+if (!hasProperty('uploadUser')) project.ext.uploadUser = ''
+if (!hasProperty('uploadPassword')) project.ext.uploadPassword = ''
+
+uploadArchives {
+	repositories {
+		mavenDeployer {
+			repository(url: uri(uploadRepositoryUri)) {
+				authentication(userName: uploadUser, password: uploadPassword)
+			}
+			snapshotRepository(url: uri(uploadSnapshotRepositoryUri)) {
+				authentication(userName: uploadUser, password: uploadPassword)
+			}
+		}
+	}
+}
+
+task checkstyle(type: Checkstyle) {
+    configFile file('../checkstyle.xml')
+    ignoreFailures true
+    source 'src/main/java'
+    include '**/*.java'
+    exclude '**/gen/**'
+    classpath = files( )
+}
+
+task findbugs(type: FindBugs) {
+    excludeFilter file('../findbugs-filter.xml')
+    ignoreFailures true
+    classes = fileTree('build/classes/release')
+    source = fileTree('src/main/java/')
+    classpath = files( )
+    effort = 'max'
+}
+
+task pmd(type: Pmd) {
+    ruleSetFiles = files('../pmd-ruleset.xml')
+    ignoreFailures = true
+    ruleSets = ["basic", "braces", "strings"]
+    source = fileTree('src/main/java/')
+}

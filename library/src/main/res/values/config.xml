@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string name="apiKey">ccmp-0ecd6b25d6df60898736d7e2823a912b-android</string>
+	<string name="gcmSenderId">926532395359</string>
+	<string name="apiUrl">https://api.websms.com/ccmp/</string>
+	<string name="appName_ua">ccmp-lib</string>
+	<string name="apiClientClassName">net.ut11.ccmp.lib.net.api.client.CcmpClient</string>
+	<string name="messageHandlerClassName">net.ut11.ccmp.lib.util.MessageHandler</string>
+</resources>
