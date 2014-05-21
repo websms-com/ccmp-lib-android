@@ -71,9 +71,6 @@ public class MessageReceiverService extends IntentService {
                         for (Object pdu : pdus) {
                             SmsMessage sms = SmsMessage.createFromPdu((byte[]) pdu);
                             String address = sms.getOriginatingAddress();
-                            if (address.charAt(0) == '+') {
-                                address = address.substring(1);
-                            }
 
                             if (address.matches(regex)) {
                                 Intent i = new Intent(context, MessageReceiverService.class);
