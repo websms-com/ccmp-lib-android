@@ -18,7 +18,7 @@ The demo application is available under [GitHub](https://github.com/websms-com/c
 It's recommended to deploy the library to your local maven repository.
 
 ``` bash
-$ gradle uploadArchives -PploadSnapshotRepositoryUri=/home/{username}/.m2/repository
+$ gradle uploadArchives -PuploadSnapshotRepositoryUri=/home/{username}/.m2/repository
 ```
 
 ## Contact
