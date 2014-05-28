@@ -26,15 +26,15 @@ public class MessageUtil {
 
 		Message msg = new Message();
 		msg.setMessageId(resp.getId());
-        msg.setAccountId(resp.getAccountId());
-        msg.setAttachmentId(resp.getAttachmentId());
-        msg.setMessage(resp.getContent());
-        msg.setAddress(resp.getSender());
-        msg.setDateSent(resp.getCreatedOn());
-        msg.setIncoming(true);
-        msg.setRead(false);
-        msg.setIsSms(false);
-        msg.setPushParameter(resp.getAdditionalPushParameter());
+		msg.setAccountId(resp.getAccountId());
+		msg.setAttachmentId(resp.getAttachmentId());
+		msg.setMessage(resp.getContent());
+		msg.setAddress(resp.getSender());
+		msg.setDateSent(resp.getCreatedOn());
+		msg.setIncoming(true);
+		msg.setRead(false);
+		msg.setIsSms(false);
+		msg.setPushParameter(resp.getAdditionalPushParameter());
 
 		return msg;
 	}
@@ -150,15 +150,15 @@ public class MessageUtil {
 		}
 
 		deleteResponseMessages(msg.getId());
-        if (msg.getAttachmentId() > 0) {
-            AttachmentsDb.deleteAttachment(msg.getAttachmentId());
-            AttachmentCache cache = AttachmentCache.getInstance(LibApp.getContext());
+		if (msg.getAttachmentId() > 0) {
+			AttachmentsDb.deleteAttachment(msg.getAttachmentId());
+			AttachmentCache cache = AttachmentCache.getInstance(LibApp.getContext());
 
-            if (cache != null) {
-                cache.deleteAttachmentFromCache(msg.getAttachmentId());
-            }
-        }
-        MessagesDb.deleteMessage(msg);
+			if (cache != null) {
+				cache.deleteAttachmentFromCache(msg.getAttachmentId());
+			}
+		}
+		MessagesDb.deleteMessage(msg);
 
 		broadcastMessageUpdated(msg.getId(), true);
 	}
