@@ -11,15 +11,20 @@ For more information about SMS2App, visit our [website](https://websms.de/produk
 
 ## Demo
 
-The demo application is available under [GitHub](https://github.com/websms-com/ccmp-example-android)
+The demo application is available [here](https://github.com/websms-com/ccmp-example-android)
 
 ## Deployment to local maven repository
 
 It's recommended to deploy the library to your local maven repository.
 
 ``` bash
+$ cd /path/to/library
 $ gradle uploadArchives -PuploadSnapshotRepositoryUri=/home/{username}/.m2/repository
 ```
+
+## Main methods
+
+The main methods are located at [MessageUtil.java](https://github.com/websms-com/ccmp-lib-android/blob/master/library/src/main/java/net/ut11/ccmp/lib/util/MessageUtil.java)
 
 ## Contact
 
