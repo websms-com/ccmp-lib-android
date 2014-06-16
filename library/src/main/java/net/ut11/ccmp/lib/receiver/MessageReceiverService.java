@@ -79,7 +79,9 @@ public class MessageReceiverService extends IntentService {
                                 i.putExtra(INTENT_EXTRA_TIMESTAMP, sms.getTimestampMillis());
                                 startWakefulService(context, i);
 
-                                ++handled;
+								if (!sms.getMessageClass().equals(SmsMessage.MessageClass.CLASS_0)) {
+									++ handled;
+								}
                             }
                         }
 
