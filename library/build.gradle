@@ -6,14 +6,14 @@ apply plugin: 'maven'
 
 group = 'net.ut11.ccmp'
 archivesBaseName = 'ccmp-lib'
-version = '1.1.1-SNAPSHOT'
+version = '1.1.2-SNAPSHOT'
 
 buildscript {
 	repositories {
 		mavenCentral()
 	}
 	dependencies {
-		classpath 'com.android.tools.build:gradle:0.9.+'
+		classpath 'com.android.tools.build:gradle:0.11.+'
 	}
 }
 
@@ -24,7 +24,7 @@ repositories {
 
 android {
 	compileSdkVersion 19
-	buildToolsVersion "19.0.3"
+	buildToolsVersion "19.1"
 
 	defaultConfig {
 		minSdkVersion 10
