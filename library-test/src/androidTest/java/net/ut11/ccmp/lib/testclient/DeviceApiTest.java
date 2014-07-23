@@ -116,7 +116,8 @@ public class DeviceApiTest extends AndroidTestCase {
 
 		prefs.setDeviceToken("47110815");
 		resp = DeviceEndpoint.getDevice();
-		assertEquals(436760000000L, resp.getMsisdn());
+        Long msisdn = 436760000000L;
+		assertEquals(msisdn, resp.getMsisdn());
 	}
 
 	public void testGetMessage() throws ApiException, NoSuchMethodException, IllegalAccessException, JSONException, InvocationTargetException {

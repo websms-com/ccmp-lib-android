@@ -172,7 +172,8 @@ public class DeviceApiTest extends AndroidTestCase {
 		assertTrue(prefs.isDeviceVerified());
 
 		DeviceResponse resp = DeviceEndpoint.getDevice();
-		assertEquals(436760000000L, resp.getMsisdn());
+        Long msisdn = 436760000000L;
+		assertEquals(msisdn, resp.getMsisdn());
 		assertNotNull(resp.getPushId());
 	}
 }
