@@ -27,24 +27,18 @@ public class VerificationPinReceiver extends BroadcastReceiver {
 		String action = intent.getAction();
 
 		if (INTENT_SMS_RECEIVED.equals(action)) {
-			String pin;
-
 			try {
 				Object[] pdus = (Object[]) intent.getSerializableExtra("pdus");
 
                 if (pdus != null) {
                     for (Object pdu : pdus) {
                         SmsMessage msg = SmsMessage.createFromPdu((byte[]) pdu);
-                        pin = checkMessage(msg.getMessageBody());
-
-                        if (pin != null) {
-                            if (pdus.length == 1) {
-                                // only abort if no more messages stored in intent
-                                abortBroadcast();
-                            }
-
-                            sendPinReceivedBroadcast(context, pin);
+                        if (pdus.length == 1) {
+                            // only abort if no more messages stored in intent
+                            abortBroadcast();
                         }
+
+                        handlePin(context, msg.getMessageBody());
                     }
                 }
 			} catch(Exception e) {
@@ -52,6 +46,16 @@ public class VerificationPinReceiver extends BroadcastReceiver {
 			}
 		}
 	}
+
+    public static void handlePin(Context context, String msg) {
+        if (msg != null) {
+            String pin = checkMessage(msg);
+
+            if (pin != null) {
+                sendPinReceivedBroadcast(context, pin);
+            }
+        }
+    }
 
 	private static String checkMessage(String body) {
 		String pin = null;
