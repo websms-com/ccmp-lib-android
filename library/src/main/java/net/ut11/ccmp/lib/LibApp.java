@@ -26,7 +26,7 @@ public class LibApp extends Application {
 		DeviceUpdateReceiver.checkConnected(context);
 
 		initApiClient();
-		initResponseIdProvider();
+		initMessageHandler();
 	}
 
 	private void initApiClient() {
@@ -41,7 +41,7 @@ public class LibApp extends Application {
 		}
 	}
 
-	private void initResponseIdProvider() {
+	private void initMessageHandler() {
 		try {
             if (getApplicationContext() != null) {
                 Class<?> clazz = Class.forName(getApplicationContext().getString(R.string.messageHandlerClassName));
@@ -62,9 +62,5 @@ public class LibApp extends Application {
 
     public static MessageHandler getMessageHandler() {
         return messageHandler;
-    }
-
-    public static void setMessageHandler(MessageHandler messageHandler) {
-        LibApp.messageHandler = messageHandler;
     }
 }
