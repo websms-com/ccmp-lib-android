@@ -180,6 +180,7 @@ public class MessagesDb extends BaseDb {
         ret.setRead(c.getInt(c.getColumnIndexOrThrow(Columns.READ)) == 1);
         ret.setResponseForId(c.getLong(c.getColumnIndexOrThrow(Columns.RESPONSE_FOR_ID)));
         ret.setPushParameter(c.getString(c.getColumnIndexOrThrow(Columns.PUSH_PARAMETER)));
+        ret.setExpired(c.getInt(c.getColumnIndexOrThrow(Columns.EXPIRED)) == 1);
 
 		return ret;
 	}
@@ -197,6 +198,7 @@ public class MessagesDb extends BaseDb {
 		private static final String IS_SMS = "is_sms";
         private static final String PUSH_PARAMETER = "push_parameter";
 		private static final String READ = "read";
-		private static final String RESPONSE_FOR_ID = "response_for_id";
+        private static final String RESPONSE_FOR_ID = "response_for_id";
+        private static final String EXPIRED = "expired";
 	}
 }

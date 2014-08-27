@@ -7,7 +7,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class LibDbHelper extends SQLiteOpenHelper {
 
 	private static final String DATABASE_NAME = "ccmplib.db";
-	private static final int DATABASE_VERSION = 2;
+	private static final int DATABASE_VERSION = 3;
 
 	private static LibDbHelper instance;
 
@@ -37,6 +37,10 @@ public class LibDbHelper extends SQLiteOpenHelper {
             createAccountsTable(db);
             createAttachmentsTable(db);
         }
+
+        if (oldVersion == 2 && newVersion > 2) {
+            addExpired(db);
+        }
     }
 
     private void addAccountFeatures(SQLiteDatabase db) {
@@ -48,6 +52,12 @@ public class LibDbHelper extends SQLiteOpenHelper {
         );
         db.execSQL("ALTER TABLE messages ADD " +
                         "  account_id					INTEGER"
+        );
+    }
+
+    private void addExpired(SQLiteDatabase db) {
+        db.execSQL("ALTER TABLE messages ADD " +
+                        "  expired				INTEGER DEFAULT (0)"
         );
     }
 
@@ -66,7 +76,8 @@ public class LibDbHelper extends SQLiteOpenHelper {
 				"  is_sms              INTEGER DEFAULT (0)," +
 				"  read                INTEGER DEFAULT (0)," +
 				"  response_for_id     INTEGER," +
-                "  push_parameter      TEXT" +
+                "  push_parameter      TEXT," +
+                "  expired             INTEGER DEFAULT (0)" +
 				")"
 		);
 	}

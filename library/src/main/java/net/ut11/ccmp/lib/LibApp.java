@@ -14,7 +14,7 @@ public class LibApp extends Application {
 
 	private static Context context;
 	private static LibPreferences libPreferences;
-	private static MessageHandler messageHandler;
+    private static MessageHandler messageHandler;
 
 	@Override
 	public void onCreate() {
@@ -60,7 +60,11 @@ public class LibApp extends Application {
 		return libPreferences;
 	}
 
-	public static MessageHandler getMessageHandler() {
-		return messageHandler;
-	}
+    public static MessageHandler getMessageHandler() {
+        return messageHandler;
+    }
+
+    public static void setMessageHandler(MessageHandler messageHandler) {
+        LibApp.messageHandler = messageHandler;
+    }
 }
