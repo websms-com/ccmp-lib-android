@@ -70,7 +70,28 @@ public class DeviceEndpoint {
 		throw new ApiException(response, null);
 	}
 
-	public static boolean verifyPin(String pin) throws ApiException {
+    public static boolean registerDevice(String pushId) throws ApiException {
+        updateClientConfiguration();
+
+        MessageReceiverService.setEnabled(false);
+
+        DeviceRegistrationRequest req = new DeviceRegistrationRequest();
+        req.setPushId(pushId);
+
+        DeviceRegistrationCall call = new DeviceRegistrationCall(req, true);
+        ApiResponse<Response> response = call.post();
+
+        if (response.getResponseCode() == HttpURLConnection.HTTP_CREATED) {
+            LibPreferences prefs = LibApp.getLibPreferences();
+            prefs.setDeviceToken(response.getReturnedId());
+
+            return true;
+        }
+
+        throw new ApiException(response, null);
+    }
+
+    public static boolean verifyPin(String pin) throws ApiException {
 		if (pin.length() < 4) {
 			if (Logger.DEBUG) Logger.debug("pin " + pin + " is too short");
 			throw new IllegalArgumentException("pin is too short");

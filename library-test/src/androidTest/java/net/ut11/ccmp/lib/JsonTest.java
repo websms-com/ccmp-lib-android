@@ -38,7 +38,8 @@ public class JsonTest extends TestCase {
 		DeviceResponse resp = JSONUnmarshaller.unmarshall(jsonString, DeviceResponse.class);
 
 		assertEquals(resp.getApiKey(), "123456abcdef#?-/\"");
-		assertEquals(resp.getMsisdn(), 436761234567L);
+        Long msisdn = 436761234567L;
+		assertEquals(resp.getMsisdn(), msisdn);
 		assertFalse(resp.getEnabled());
 	}
 

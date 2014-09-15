@@ -22,8 +22,9 @@ import java.io.IOException;
 
 public class GcmRegistration {
 
-	public static final String INTENT_GCM_REGISTRATION_ERROR = "net.ut11.ccmp.lib.GCM_REGISTRATION_ERROR";
-	public static final String INTENT_EXTRA_RESULT_CODE = "resultCode";
+    public static final String INTENT_GCM_REGISTRATION_ERROR = "net.ut11.ccmp.lib.GCM_REGISTRATION_ERROR";
+    public static final String INTENT_GCM_REGISTRATION_SUCCESSFUL = "net.ut11.ccmp.lib.GCM_REGISTRATION_SUCCESSFUL";
+    public static final String INTENT_EXTRA_RESULT_CODE = "resultCode";
 
 	public static void checkRegistration() {
 		final Context context = LibApp.getContext();
@@ -49,6 +50,9 @@ public class GcmRegistration {
 					if (prefs.isRegistered()) {
 						DeviceEndpoint.updateDevice();
 					}
+
+                    Intent i = new Intent(INTENT_GCM_REGISTRATION_SUCCESSFUL);
+                    LocalBroadcastManager.getInstance(context).sendBroadcast(i);
 				} catch (IOException e) {
 					if (Logger.DEBUG) Logger.debug("gcm registration failed");
 				} catch (ApiException e) {
