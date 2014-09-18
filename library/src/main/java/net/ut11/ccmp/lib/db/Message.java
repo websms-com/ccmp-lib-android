@@ -14,6 +14,7 @@ public class Message {
     private boolean incoming;
     private boolean read;
     private boolean isSms;
+    private boolean expired = false;
 
 	public long getId() {
 		return id;
@@ -109,5 +110,13 @@ public class Message {
 
     public void setAttachmentId(long attachmentId) {
         this.attachmentId = attachmentId;
+    }
+
+    public boolean isExpired() {
+        return expired;
+    }
+
+    public void setExpired(boolean expired) {
+        this.expired = expired;
     }
 }

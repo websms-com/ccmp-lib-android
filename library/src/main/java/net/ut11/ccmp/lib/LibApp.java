@@ -14,7 +14,7 @@ public class LibApp extends Application {
 
 	private static Context context;
 	private static LibPreferences libPreferences;
-	private static MessageHandler messageHandler;
+    private static MessageHandler messageHandler;
 
 	@Override
 	public void onCreate() {
@@ -26,7 +26,7 @@ public class LibApp extends Application {
 		DeviceUpdateReceiver.checkConnected(context);
 
 		initApiClient();
-		initResponseIdProvider();
+		initMessageHandler();
 	}
 
 	private void initApiClient() {
@@ -41,7 +41,7 @@ public class LibApp extends Application {
 		}
 	}
 
-	private void initResponseIdProvider() {
+	private void initMessageHandler() {
 		try {
             if (getApplicationContext() != null) {
                 Class<?> clazz = Class.forName(getApplicationContext().getString(R.string.messageHandlerClassName));
@@ -60,7 +60,7 @@ public class LibApp extends Application {
 		return libPreferences;
 	}
 
-	public static MessageHandler getMessageHandler() {
-		return messageHandler;
-	}
+    public static MessageHandler getMessageHandler() {
+        return messageHandler;
+    }
 }
