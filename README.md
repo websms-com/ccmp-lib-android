@@ -6,7 +6,7 @@ For more information about SMS2App, visit our [website](https://websms.de/produk
 
 ## Requirements
 * Android SDK
-* Gradle 1.10 or higher
+* Gradle 2.2 or higher
 * Android 2.3 or higher
 
 ## Demo

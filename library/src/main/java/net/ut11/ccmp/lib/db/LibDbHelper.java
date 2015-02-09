@@ -7,7 +7,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class LibDbHelper extends SQLiteOpenHelper {
 
 	private static final String DATABASE_NAME = "ccmplib.db";
-	private static final int DATABASE_VERSION = 3;
+	private static final int DATABASE_VERSION = 4;
 
 	private static LibDbHelper instance;
 
@@ -31,34 +31,19 @@ public class LibDbHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
-        if (oldVersion == 1 && newVersion > 1) {
+        if (oldVersion <= 1 && newVersion > 1) {
             addAccountFeatures(db);
             createAccountsTable(db);
             createAttachmentsTable(db);
         }
 
-        if (oldVersion == 2 && newVersion > 2) {
-            addExpired(db);
-        }
-    }
+		if (oldVersion <= 2 && newVersion > 2) {
+			addExpired(db);
+		}
 
-    private void addAccountFeatures(SQLiteDatabase db) {
-        db.execSQL("ALTER TABLE messages ADD " +
-                        "  attachment_id				INTEGER DEFAULT (0)"
-        );
-        db.execSQL("ALTER TABLE messages ADD " +
-                        "  push_parameter			    TEXT"
-        );
-        db.execSQL("ALTER TABLE messages ADD " +
-                        "  account_id					INTEGER"
-        );
-    }
-
-    private void addExpired(SQLiteDatabase db) {
-        db.execSQL("ALTER TABLE messages ADD " +
-                        "  expired				INTEGER DEFAULT (0)"
-        );
+		if (oldVersion <= 3 && newVersion > 3) {
+			addPriority(db);
+		}
     }
 
 	private void createMessagesTable(SQLiteDatabase db) {
@@ -77,7 +62,8 @@ public class LibDbHelper extends SQLiteOpenHelper {
 				"  read                INTEGER DEFAULT (0)," +
 				"  response_for_id     INTEGER," +
                 "  push_parameter      TEXT," +
-                "  expired             INTEGER DEFAULT (0)" +
+                "  expired             INTEGER DEFAULT (0)," +
+				"  priority            INTEGER DEFAULT (-1)" +
 				")"
 		);
 	}
@@ -106,4 +92,26 @@ public class LibDbHelper extends SQLiteOpenHelper {
                         ")"
         );
     }
+
+	private void addAccountFeatures(SQLiteDatabase db) {
+		db.execSQL("ALTER TABLE messages ADD " +
+						"  attachment_id				INTEGER DEFAULT (0)"
+		);
+		db.execSQL("ALTER TABLE messages ADD " +
+						"  push_parameter			    TEXT"
+		);
+		db.execSQL("ALTER TABLE messages ADD " +
+						"  account_id					INTEGER"
+		);
+	}
+
+	private void addExpired(SQLiteDatabase db) {
+		db.execSQL("ALTER TABLE messages ADD " +
+						"  expired				INTEGER DEFAULT (0)"
+		);
+	}
+	private void addPriority(SQLiteDatabase db) {
+		db.execSQL("ALTER TABLE messages ADD  priority INTEGER DEFAULT (-1)"
+		);
+	}
 }

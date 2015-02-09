@@ -162,6 +162,7 @@ public class MessagesDb extends BaseDb {
         putNull(values, Columns.PUSH_PARAMETER, msg.getPushParameter());
         putNull(values, Columns.READ, msg.isRead() ? 1 : 0);
         putNull(values, Columns.RESPONSE_FOR_ID, msg.getResponseForId() >0 ? msg.getResponseForId() : null);
+        putNull(values, Columns.PRIORITY, msg.getPriority());
 
         return values;
 	}
@@ -181,6 +182,7 @@ public class MessagesDb extends BaseDb {
         ret.setResponseForId(c.getLong(c.getColumnIndexOrThrow(Columns.RESPONSE_FOR_ID)));
         ret.setPushParameter(c.getString(c.getColumnIndexOrThrow(Columns.PUSH_PARAMETER)));
         ret.setExpired(c.getInt(c.getColumnIndexOrThrow(Columns.EXPIRED)) == 1);
+        ret.setPriority(c.getInt(c.getColumnIndexOrThrow(Columns.PRIORITY)));
 
 		return ret;
 	}
@@ -200,5 +202,6 @@ public class MessagesDb extends BaseDb {
 		private static final String READ = "read";
         private static final String RESPONSE_FOR_ID = "response_for_id";
         private static final String EXPIRED = "expired";
+        private static final String PRIORITY = "priority";
 	}
 }

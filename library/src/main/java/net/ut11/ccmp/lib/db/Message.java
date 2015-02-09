@@ -15,6 +15,7 @@ public class Message {
     private boolean read;
     private boolean isSms;
     private boolean expired = false;
+	private int priority = -1;
 
 	public long getId() {
 		return id;
@@ -119,4 +120,12 @@ public class Message {
     public void setExpired(boolean expired) {
         this.expired = expired;
     }
+
+	public int getPriority() {
+		return priority;
+	}
+
+	public void setPriority(int priority) {
+		this.priority = priority;
+	}
 }
