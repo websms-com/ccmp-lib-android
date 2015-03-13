@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.provider.BaseColumns;
+import android.text.TextUtils;
 
 import net.ut11.ccmp.lib.util.AttachmentCache;
 import net.ut11.ccmp.lib.util.MD5Util;
@@ -103,20 +104,23 @@ public class MessagesDb extends BaseDb {
 	}
 
 	public static Message getMessage(long date, String sender, String message) {
-		Message msg = null;
-
-		String sel = Columns.INCOMING + "=1 AND " + Columns.DATE_SENT + ">? AND " + Columns.DATE_SENT + "<? AND " + Columns.ADDRESS + "=? AND " + Columns.MESSAGE_CHECKSUM + "=?";
-		String[] selArgs = { String.valueOf(date - 30000), String.valueOf(date + 30000), sender, MD5Util.getMD5Sum(message) };
+		String sel = Columns.INCOMING + "=1 AND " + Columns.DATE_SENT + ">? AND " + Columns.DATE_SENT + "<? AND " + Columns.MESSAGE_CHECKSUM + "=?";
+		String[] selArgs = { String.valueOf(date - 30000), String.valueOf(date + 30000), MD5Util.getMD5Sum(message) };
 
 		SQLiteDatabase db = getReadableDatabase();
 		Cursor c = db.query(TABLE_NAME, null, sel, selArgs, null, null, null);
 
-		if (c != null && c.moveToNext()) {
-			msg = getMessageFromCursor(c);
+		if (c != null) {
+			while (c.moveToNext()) {
+				Message msg = getMessageFromCursor(c);
+				if (TextUtils.equals(stripAddress(sender), stripAddress(msg.getAddress()))) {
+					return msg;
+				}
+			}
 			c.close();
 		}
 
-		return msg;
+		return null;
 	}
 
 	public static void saveMessage(Message msg) {
@@ -185,6 +189,18 @@ public class MessagesDb extends BaseDb {
         ret.setPriority(c.getInt(c.getColumnIndexOrThrow(Columns.PRIORITY)));
 
 		return ret;
+	}
+
+	private static String stripAddress(String address) {
+		if (address.startsWith("0")) {
+			return address.substring(1);
+		}
+
+		if (address.startsWith("+4")) {
+			return address.substring(3);
+		}
+
+		return address;
 	}
 
 	private static class Columns implements BaseColumns {
