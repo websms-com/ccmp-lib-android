@@ -6,7 +6,7 @@ apply plugin: 'maven'
 
 group = 'net.ut11.ccmp'
 archivesBaseName = 'ccmp-lib'
-version = '1.1.5-SNAPSHOT'
+version = '1.1.6-SNAPSHOT'
 
 buildscript {
 	repositories {
