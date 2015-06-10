@@ -48,6 +48,22 @@ public class MessagesDb extends BaseDb {
 		return msgs;
 	}
 
+	public static List<Message> getMessagesByAccount(long accountId) {
+		List<Message> msgs = new ArrayList<Message>();
+
+		SQLiteDatabase db = getReadableDatabase();
+		Cursor c = db.query(TABLE_NAME, null, Columns.ACCOUNT_ID + "= ?", new String[]{ String.valueOf(accountId) }, null, null, Columns.DATE_SENT + " DESC, " + Columns._ID + " DESC");
+
+		if (c != null) {
+			while (c.moveToNext()) {
+				msgs.add(getMessageFromCursor(c));
+			}
+			c.close();
+		}
+
+		return msgs;
+	}
+
 	public static List<Message> getResponseMessages(long id) {
 		List<Message> msgs = new ArrayList<Message>();
 

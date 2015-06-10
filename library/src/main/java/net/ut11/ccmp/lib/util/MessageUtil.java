@@ -111,6 +111,14 @@ public class MessageUtil {
 	}
 
 	/**
+	 * gives all stored messages linked to an account
+	 * @return messages
+	 */
+	public static List<Message> getMessagesByAccount(long accountId) {
+		return MessagesDb.getMessagesByAccount(accountId);
+	}
+
+	/**
 	 * gets all outgoing messages
 	 * @return messages
 	 */

@@ -43,6 +43,11 @@ public class AccountCache {
         return account;
     }
 
+    public static void deleteAccount(long accountId) {
+        AccountsDb.delete(accountId);
+        removeFromCache(accountId);
+    }
+
     public static void removeFromCache(long accountId) {
         cache.remove(accountId);
     }

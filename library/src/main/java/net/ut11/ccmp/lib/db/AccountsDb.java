@@ -9,6 +9,9 @@ import android.provider.BaseColumns;
 import net.ut11.ccmp.lib.util.AccountCache;
 import net.ut11.ccmp.lib.util.Logger;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class AccountsDb extends BaseDb {
 
 	private static final String TABLE_NAME = "accounts";
@@ -25,6 +28,23 @@ public class AccountsDb extends BaseDb {
         }
 
         return account;
+    }
+
+    public static List<Account> getAccounts() {
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor c = db.query(TABLE_NAME, null, null, null, null, null, null);
+
+        List<Account> accounts = new ArrayList<Account>();
+        if (c == null) {
+            return accounts;
+        }
+
+        while (c.moveToNext()) {
+            accounts.add(getAccountFromCursor(c));
+        }
+
+        c.close();
+        return accounts;
     }
 
 	public static void insert(long id, boolean isReplyable, String avatarUrl, String displayName, long timeStamp) {
@@ -45,6 +65,11 @@ public class AccountsDb extends BaseDb {
             }
         }
 	}
+
+    public static void delete(long id) {
+        SQLiteDatabase db = getWritableDatabase();
+        db.delete(TABLE_NAME, Columns._ID + "=?", new String[]{ String.valueOf(id) });
+    }
 
     public static void addAvatar(long accountId, byte[] avatar) {
         SQLiteDatabase db = getWritableDatabase();
