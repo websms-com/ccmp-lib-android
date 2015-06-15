@@ -51,8 +51,12 @@ public class MessagesDb extends BaseDb {
 	public static List<Message> getMessagesByAccount(long accountId) {
 		List<Message> msgs = new ArrayList<Message>();
 
-		SQLiteDatabase db = getReadableDatabase();
-		Cursor c = db.query(TABLE_NAME, null, Columns.ACCOUNT_ID + "= ?", new String[]{ String.valueOf(accountId) }, null, null, Columns.DATE_SENT + " DESC, " + Columns._ID + " DESC");
+        String allMessagesQuery = "SELECT m.* FROM " + TABLE_NAME + " m" +
+                " LEFT JOIN " + TABLE_NAME + " mp ON m." + Columns.RESPONSE_FOR_ID + " = mp." + Columns._ID +
+                " WHERE m." + Columns.ACCOUNT_ID + " = ? OR mp." + Columns.ACCOUNT_ID + " = ?" +
+                " ORDER BY m." + Columns.DATE_SENT + " ASC, m." + Columns._ID + " ASC";
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor c = db.rawQuery(allMessagesQuery, new String[]{ String.valueOf(accountId), String.valueOf(accountId) });
 
 		if (c != null) {
 			while (c.moveToNext()) {
