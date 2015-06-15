@@ -16,6 +16,7 @@ public class Message {
     private boolean isSms;
     private boolean expired = false;
 	private int priority = -1;
+	private boolean isReplyable;
 
 	public long getId() {
 		return id;
@@ -128,4 +129,12 @@ public class Message {
 	public void setPriority(int priority) {
 		this.priority = priority;
 	}
+
+    public boolean isReplyable() {
+        return isReplyable;
+    }
+
+    public void setIsReplyable(boolean isReplyable) {
+        this.isReplyable = isReplyable;
+    }
 }

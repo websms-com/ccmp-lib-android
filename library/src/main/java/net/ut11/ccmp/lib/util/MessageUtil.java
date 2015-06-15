@@ -37,6 +37,7 @@ public class MessageUtil {
 		msg.setPushParameter(resp.getAdditionalPushParameter());
         msg.setExpired(resp.getExpired());
         msg.setPriority(resp.getPriority());
+		msg.setIsReplyable(resp.getReplyable());
 
 		return msg;
 	}
@@ -228,6 +229,7 @@ public class MessageUtil {
 			msg.setAddress(recipient);
 			msg.setMessage(message);
 			msg.setResponseForId(msgToRespond == null ? 0 : msgToRespond.getId());
+			msg.setAccountId(msgToRespond == null ? 0 : msgToRespond.getAccountId());
 
 			MessagesDb.saveMessage(msg);
 			broadcastMessageInserted(msg.getId(), true);
