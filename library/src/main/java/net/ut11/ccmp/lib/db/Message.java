@@ -134,7 +134,7 @@ public class Message {
         return isReplyable;
     }
 
-    public void setIsReplyable(boolean isReplyable) {
+    public void setReplyable(boolean isReplyable) {
         this.isReplyable = isReplyable;
     }
 }

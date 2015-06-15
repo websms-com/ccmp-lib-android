@@ -37,7 +37,7 @@ public class MessageUtil {
 		msg.setPushParameter(resp.getAdditionalPushParameter());
         msg.setExpired(resp.getExpired());
         msg.setPriority(resp.getPriority());
-		msg.setIsReplyable(resp.getReplyable());
+		msg.setReplyable(resp.getReplyable());
 
 		return msg;
 	}

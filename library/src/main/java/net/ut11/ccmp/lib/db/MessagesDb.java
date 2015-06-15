@@ -204,7 +204,7 @@ public class MessagesDb extends BaseDb {
         ret.setPushParameter(c.getString(c.getColumnIndexOrThrow(Columns.PUSH_PARAMETER)));
         ret.setExpired(c.getInt(c.getColumnIndexOrThrow(Columns.EXPIRED)) == 1);
         ret.setPriority(c.getInt(c.getColumnIndexOrThrow(Columns.PRIORITY)));
-        ret.setIsReplyable(c.getInt(c.getColumnIndexOrThrow(Columns.IS_REPLYABLE)) == 1);
+        ret.setReplyable(c.getInt(c.getColumnIndexOrThrow(Columns.IS_REPLYABLE)) == 1);
 
 		return ret;
 	}
