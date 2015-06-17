@@ -10,6 +10,8 @@ import net.ut11.ccmp.lib.db.MessagesDb;
 import net.ut11.ccmp.lib.net.api.endpoint.DeviceEndpoint;
 import net.ut11.ccmp.lib.net.api.response.ApiException;
 
+import org.json.JSONObject;
+
 import java.util.List;
 
 public class MessageUtil {
@@ -37,7 +39,18 @@ public class MessageUtil {
 		msg.setPushParameter(resp.getAdditionalPushParameter());
         msg.setExpired(resp.getExpired());
         msg.setPriority(resp.getPriority());
-		msg.setReplyable(resp.getReplyable());
+
+		msg.setReplyable(resp.getReplyable()); // replyable property of account
+        if (resp.getAdditionalPushParameter() != null) {
+            try {
+                // replyable property of message
+                msg.setReplyable(new JSONObject(resp.getAdditionalPushParameter()).getBoolean("replyable"));
+            } catch (Exception e) {
+                if (Logger.DEBUG) {
+                    Logger.debug("message has no custom replyable parameter");
+                }
+            }
+        }
 
 		return msg;
 	}
