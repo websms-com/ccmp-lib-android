@@ -18,6 +18,7 @@ import net.ut11.ccmp.lib.net.api.response.ApiException;
 import net.ut11.ccmp.lib.net.api.response.ApiResponse;
 import net.ut11.ccmp.lib.net.gcm.GcmRegistration;
 import net.ut11.ccmp.lib.util.AccountCache;
+import net.ut11.ccmp.lib.util.AccountUpdateHelper;
 import net.ut11.ccmp.lib.util.LibPreferences;
 import net.ut11.ccmp.lib.util.Logger;
 import net.ut11.ccmp.lib.util.MessageUtil;
@@ -47,10 +48,7 @@ public class InboxUpdateService extends IntentService {
 	protected void onHandleIntent(Intent intent) {
 		try {
 			for (DeviceInboxResponse resp : DeviceEndpoint.getMessages()) {
-                if (accountRefreshNeeded(resp.getAccountId(), resp.getAccountTimestamp())) {
-                    refreshAccount(resp.getAccountId(), resp.getAccountTimestamp());
-                }
-
+                AccountUpdateHelper.updateAccountData(resp.getAccountId(), resp.getAccountTimestamp());
 				Message msg = MessageUtil.getMessageFrom(resp);
 				MessageUtil.insertMessage(msg);
 			}
@@ -60,40 +58,4 @@ public class InboxUpdateService extends IntentService {
 
 		GcmRegistration.checkRegistration();
 	}
-
-    private void refreshAccount(long accountId, long refreshTimestamp) {
-        try {
-            DeviceAccountConfigurationCall call = new DeviceAccountConfigurationCall(accountId);
-            ApiResponse<DeviceConfigurationResponse> response = call.get();
-
-            if (response.getResponseCode() != HttpURLConnection.HTTP_OK) {
-                Logger.warn(String.format("account information refresh failed with non-ok http status %d", response.getResponseCode()));
-                return;
-            }
-
-            boolean replyable = false;
-            String senderDisplayName = null;
-            String senderDisplayImage = null;
-
-            List<DeviceConfigurationResponse> configuration = response.getResponseArray(DeviceConfigurationResponse.class);
-            for (DeviceConfigurationResponse config : configuration) {
-                if (DeviceAccountConfigurationCall.KEY_SENDER_DISPLAY_NAME.equals(config.getKey())) {
-                    senderDisplayName = config.getValue();
-                } else if (DeviceAccountConfigurationCall.KEY_SENDER_DISPLAY_IMAGE.equals(config.getKey())) {
-                    senderDisplayImage = config.getValue();
-                } else if (DeviceAccountConfigurationCall.KEY_DEFAULT_REPLYABLE.equals(config.getKey())) {
-                    replyable = Boolean.parseBoolean(config.getValue());
-                }
-            }
-
-            AccountsDb.insert(accountId, replyable, senderDisplayImage, senderDisplayName, refreshTimestamp);
-        } catch (ApiException e) {
-            Logger.warn("failed to refresh account information");
-        }
-    }
-
-    private boolean accountRefreshNeeded(long accountId, long timestamp) {
-        Account account = AccountCache.getAccount(accountId);
-        return !(account != null && timestamp == account.getTimeStamp());
-    }
 }
