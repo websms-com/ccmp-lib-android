@@ -40,7 +40,7 @@ public class MessageUtil {
         msg.setExpired(resp.getExpired());
         msg.setPriority(resp.getPriority());
 
-		msg.setReplyable(resp.getReplyable()); // replyable property of account
+		msg.setReplyable(false);
         if (resp.getAdditionalPushParameter() != null) {
             try {
                 // replyable property of message
