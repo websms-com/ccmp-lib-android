@@ -71,7 +71,7 @@ public class LibDbHelper extends SQLiteOpenHelper {
 				"  response_for_id     INTEGER," +
                 "  push_parameter      TEXT," +
                 "  expired             INTEGER DEFAULT (0)," +
-				"  priority            INTEGER DEFAULT (-1)" +
+				"  priority            INTEGER DEFAULT (-1)," +
 				"  is_replyable        INTEGER DEFAULT (0)" +
 				")"
 		);
