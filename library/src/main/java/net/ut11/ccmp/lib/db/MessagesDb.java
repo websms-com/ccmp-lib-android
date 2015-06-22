@@ -48,6 +48,22 @@ public class MessagesDb extends BaseDb {
 		return msgs;
 	}
 
+	public static List<Message> getMessagesByAccount(long accountId) {
+		List<Message> msgs = new ArrayList<Message>();
+
+		SQLiteDatabase db = getReadableDatabase();
+		Cursor c = db.query(TABLE_NAME, null, Columns.ACCOUNT_ID + "= ?", new String[]{String.valueOf(accountId)}, null, null, Columns.DATE_SENT + " ASC, " + Columns._ID + " ASC");
+
+		if (c != null) {
+			while (c.moveToNext()) {
+				msgs.add(getMessageFromCursor(c));
+			}
+			c.close();
+		}
+
+		return msgs;
+	}
+
 	public static List<Message> getResponseMessages(long id) {
 		List<Message> msgs = new ArrayList<Message>();
 
@@ -167,6 +183,7 @@ public class MessagesDb extends BaseDb {
         putNull(values, Columns.READ, msg.isRead() ? 1 : 0);
         putNull(values, Columns.RESPONSE_FOR_ID, msg.getResponseForId() >0 ? msg.getResponseForId() : null);
         putNull(values, Columns.PRIORITY, msg.getPriority());
+        putNull(values, Columns.IS_REPLYABLE, msg.isReplyable() ? 1 : 0);
 
         return values;
 	}
@@ -187,6 +204,7 @@ public class MessagesDb extends BaseDb {
         ret.setPushParameter(c.getString(c.getColumnIndexOrThrow(Columns.PUSH_PARAMETER)));
         ret.setExpired(c.getInt(c.getColumnIndexOrThrow(Columns.EXPIRED)) == 1);
         ret.setPriority(c.getInt(c.getColumnIndexOrThrow(Columns.PRIORITY)));
+        ret.setReplyable(c.getInt(c.getColumnIndexOrThrow(Columns.IS_REPLYABLE)) == 1);
 
 		return ret;
 	}
@@ -219,5 +237,6 @@ public class MessagesDb extends BaseDb {
         private static final String RESPONSE_FOR_ID = "response_for_id";
         private static final String EXPIRED = "expired";
         private static final String PRIORITY = "priority";
+        private static final String IS_REPLYABLE = "is_replyable";
 	}
 }

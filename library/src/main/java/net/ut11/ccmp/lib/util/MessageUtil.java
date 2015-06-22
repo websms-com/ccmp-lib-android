@@ -10,6 +10,8 @@ import net.ut11.ccmp.lib.db.MessagesDb;
 import net.ut11.ccmp.lib.net.api.endpoint.DeviceEndpoint;
 import net.ut11.ccmp.lib.net.api.response.ApiException;
 
+import org.json.JSONObject;
+
 import java.util.List;
 
 public class MessageUtil {
@@ -18,6 +20,7 @@ public class MessageUtil {
 	public static final String INTENT_MESSAGE_UPDATED = "net.ut11.ccmp.lib.MESSAGE_UPDATED";
 	public static final String INTENT_EXTRA_MESSAGE_ID = "msgId";
 	public static final String INTENT_EXTRA_MESSAGE_READ = "read";
+	public static final String INTENT_EXTRA_MESSAGE_ACCOUNT_ID = "accountId";
 
 	public static Message getMessageFrom(DeviceInboxResponse resp) {
 		if (resp == null) {
@@ -37,6 +40,18 @@ public class MessageUtil {
 		msg.setPushParameter(resp.getAdditionalPushParameter());
         msg.setExpired(resp.getExpired());
         msg.setPriority(resp.getPriority());
+
+		msg.setReplyable(false);
+        if (resp.getAdditionalPushParameter() != null) {
+            try {
+                // replyable property of message
+                msg.setReplyable(new JSONObject(resp.getAdditionalPushParameter()).getBoolean("replyable"));
+            } catch (Exception e) {
+                if (Logger.DEBUG) {
+                    Logger.debug("message has no custom replyable parameter");
+                }
+            }
+        }
 
 		return msg;
 	}
@@ -71,7 +86,7 @@ public class MessageUtil {
 			mh.handleIncomingMessageInserted(msg);
 		}
 
-		broadcastMessageInserted(msg.getId(), msg.isRead());
+		broadcastMessageInserted(msg.getId(), msg.isRead(), msg.getAccountId());
 
 		return true;
 	}
@@ -108,6 +123,14 @@ public class MessageUtil {
 	 */
 	public static List<Message> getUnreadMessages() {
 		return MessagesDb.getUnreadMessages();
+	}
+
+	/**
+	 * gives all stored messages linked to an account
+	 * @return messages
+	 */
+	public static List<Message> getMessagesByAccount(long accountId) {
+		return MessagesDb.getMessagesByAccount(accountId);
 	}
 
 	/**
@@ -220,9 +243,10 @@ public class MessageUtil {
 			msg.setAddress(recipient);
 			msg.setMessage(message);
 			msg.setResponseForId(msgToRespond == null ? 0 : msgToRespond.getId());
+			msg.setAccountId(msgToRespond == null ? 0 : msgToRespond.getAccountId());
 
 			MessagesDb.saveMessage(msg);
-			broadcastMessageInserted(msg.getId(), true);
+			broadcastMessageInserted(msg.getId(), true, msg.getAccountId());
 
 			return msg;
 		}
@@ -230,10 +254,11 @@ public class MessageUtil {
 		return null;
 	}
 
-	private static void broadcastMessageInserted(long msgId, boolean read) {
+	private static void broadcastMessageInserted(long msgId, boolean read, long accountId) {
 		Intent i = new Intent(INTENT_MESSAGE_INSERTED);
 		i.putExtra(INTENT_EXTRA_MESSAGE_ID, msgId);
 		i.putExtra(INTENT_EXTRA_MESSAGE_READ, read);
+		i.putExtra(INTENT_EXTRA_MESSAGE_ACCOUNT_ID, accountId);
 		LibApp.getContext().sendBroadcast(i);
 	}
 
