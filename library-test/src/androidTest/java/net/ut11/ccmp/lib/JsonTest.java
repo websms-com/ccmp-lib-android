@@ -16,8 +16,8 @@ import de.pribluda.android.jsonmarshaller.JSONUnmarshaller;
 
 public class JsonTest extends TestCase {
 
-	private static String jsonString = "{\"enabled\":false,\"msisdn\":436761234567,\"apiKey\":\"123456abcdef#?-\\/\\\"\"}";
-	private static String jsonString2 = "{\"enabled\":true,\"msisdn\":436760123456,\"apiKey\":\"012345abcdef#?-\\/\\\"\"}";
+	private static String jsonString = "{\"apiKey\":\"123456abcdef#?-\\/\\\"\",\"enabled\":false,\"msisdn\":436761234567}";
+	private static String jsonString2 = "{\"apiKey\":\"012345abcdef#?-\\/\\\"\",\"enabled\":true,\"msisdn\":436760123456}";
 	private static String jsonArrayString = "[" + jsonString + "," + jsonString2 + "]";
 
 	public void testMarshall() throws NoSuchMethodException, IllegalAccessException, JSONException, InvocationTargetException {
@@ -31,7 +31,7 @@ public class JsonTest extends TestCase {
 		assertEquals(obj.getLong("msisdn"), 436761234567L);
 		assertFalse(obj.getBoolean("enabled"));
 
-		assertEquals(obj.toString(), jsonString);
+		assertEquals(jsonString, obj.toString());
 	}
 
 	public void testUnmarshall() throws NoSuchMethodException, InstantiationException, IllegalAccessException, JSONException, InvocationTargetException {
@@ -66,6 +66,6 @@ public class JsonTest extends TestCase {
 		assertEquals(jo.getLong("msisdn"), 436760123456L);
 		assertTrue(jo.getBoolean("enabled"));
 
-		assertEquals(array.toString(), jsonArrayString);
+		assertEquals(jsonArrayString, array.toString());
 	}
 }
