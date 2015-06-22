@@ -20,6 +20,7 @@ public class MessageUtil {
 	public static final String INTENT_MESSAGE_UPDATED = "net.ut11.ccmp.lib.MESSAGE_UPDATED";
 	public static final String INTENT_EXTRA_MESSAGE_ID = "msgId";
 	public static final String INTENT_EXTRA_MESSAGE_READ = "read";
+	public static final String INTENT_EXTRA_MESSAGE_ACCOUNT_ID = "accountId";
 
 	public static Message getMessageFrom(DeviceInboxResponse resp) {
 		if (resp == null) {
@@ -85,7 +86,7 @@ public class MessageUtil {
 			mh.handleIncomingMessageInserted(msg);
 		}
 
-		broadcastMessageInserted(msg.getId(), msg.isRead());
+		broadcastMessageInserted(msg.getId(), msg.isRead(), msg.getAccountId());
 
 		return true;
 	}
@@ -245,7 +246,7 @@ public class MessageUtil {
 			msg.setAccountId(msgToRespond == null ? 0 : msgToRespond.getAccountId());
 
 			MessagesDb.saveMessage(msg);
-			broadcastMessageInserted(msg.getId(), true);
+			broadcastMessageInserted(msg.getId(), true, msg.getAccountId());
 
 			return msg;
 		}
@@ -253,10 +254,11 @@ public class MessageUtil {
 		return null;
 	}
 
-	private static void broadcastMessageInserted(long msgId, boolean read) {
+	private static void broadcastMessageInserted(long msgId, boolean read, long accountId) {
 		Intent i = new Intent(INTENT_MESSAGE_INSERTED);
 		i.putExtra(INTENT_EXTRA_MESSAGE_ID, msgId);
 		i.putExtra(INTENT_EXTRA_MESSAGE_READ, read);
+		i.putExtra(INTENT_EXTRA_MESSAGE_ACCOUNT_ID, accountId);
 		LibApp.getContext().sendBroadcast(i);
 	}
 
