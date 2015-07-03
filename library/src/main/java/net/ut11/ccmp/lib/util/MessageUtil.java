@@ -54,6 +54,7 @@ public class MessageUtil {
 			if (dbMsg != null && (dbMsg.getMessageId() == 0 || msg.getMessageId() == 0 || msg.getMessageId() == dbMsg.getMessageId())) {
 				if (dbMsg.getMessageId() == 0 && msg.getMessageId() > 0) {
 					dbMsg.setMessageId(msg.getMessageId());
+					dbMsg.setAttachmentId(msg.getAttachmentId());
 
 					MessagesDb.saveMessage(dbMsg);
 					broadcastMessageUpdated(dbMsg.getId(), dbMsg.isRead());
