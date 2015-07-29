@@ -15,6 +15,7 @@ import net.ut11.ccmp.lib.util.Logger;
 import net.ut11.ccmp.lib.util.MessageUtil;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 
 public class MessageReceiverService extends IntentService {
 
@@ -155,36 +156,16 @@ public class MessageReceiverService extends IntentService {
 				Field field = smsMessage.getClass().getField("mWrappedSmsMessage");
 				Object mWrappedSmsMessage = field.get(smsMessage);
 
-				field = null;
-				for (Field field1 : mWrappedSmsMessage.getClass().getSuperclass().getDeclaredFields()) {
-					if ("mUserDataHeader".equals(field1.getName())) {
-						field = field1;
-						break;
-					}
-				}
+				Method getUserDataHeader = mWrappedSmsMessage.getClass().getMethod("getUserDataHeader");
+				Object userDataHeader = getUserDataHeader.invoke(mWrappedSmsMessage);
 
-				if (field != null) {
-					field.setAccessible(true);
-					Object mUserDataHeader = field.get(mWrappedSmsMessage);
+				field = userDataHeader.getClass().getField("concatRef");
+				Object concatRef = field.get(userDataHeader);
+				Class clazz = concatRef.getClass();
 
-					field = null;
-					for (Field field1 : mUserDataHeader.getClass().getDeclaredFields()) {
-						if ("concatRef".equals(field1.getName())) {
-							field = field1;
-							break;
-						}
-					}
-
-					if (field != null) {
-						field.setAccessible(true);
-						Object concatRef = field.get(mUserDataHeader);
-						Class clazz = concatRef.getClass();
-
-						smsWithHeader.msgCount = clazz.getField("msgCount").getInt(concatRef);
-						smsWithHeader.seqNumber = clazz.getField("seqNumber").getInt(concatRef);
-						smsWithHeader.refNumber = clazz.getField("refNumber").getInt(concatRef);
-					}
-				}
+				smsWithHeader.msgCount = clazz.getField("msgCount").getInt(concatRef);
+				smsWithHeader.seqNumber = clazz.getField("seqNumber").getInt(concatRef);
+				smsWithHeader.refNumber = clazz.getField("refNumber").getInt(concatRef);
 			} catch (Exception e) {
 				Logger.warn("failed to get concatRef");
 			}
