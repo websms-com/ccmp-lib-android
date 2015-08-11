@@ -7,11 +7,15 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.support.v4.content.WakefulBroadcastReceiver;
 import android.telephony.SmsMessage;
+import android.util.SparseArray;
 
 import net.ut11.ccmp.lib.LibApp;
 import net.ut11.ccmp.lib.db.Message;
 import net.ut11.ccmp.lib.util.Logger;
 import net.ut11.ccmp.lib.util.MessageUtil;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 
 public class MessageReceiverService extends IntentService {
 
@@ -67,23 +71,62 @@ public class MessageReceiverService extends IntentService {
 				try {
 					Object[] pdus = (Object[]) intent.getSerializableExtra("pdus");
                     int handled = 0;
+
                     if (pdus != null) {
+						final SparseArray<SmsMessageWithConcatRef[]> messages = new SparseArray<SmsMessageWithConcatRef[]>();
+
                         for (Object pdu : pdus) {
                             SmsMessage sms = SmsMessage.createFromPdu((byte[]) pdu);
                             String address = sms.getOriginatingAddress();
 
                             if (address.matches(regex)) {
-                                Intent i = new Intent(context, MessageReceiverService.class);
-                                i.putExtra(INTENT_EXTRA_ADDRESS, address);
-                                i.putExtra(INTENT_EXTRA_MESSAGE, sms.getMessageBody());
-                                i.putExtra(INTENT_EXTRA_TIMESTAMP, sms.getTimestampMillis());
-                                startWakefulService(context, i);
+								SmsMessageWithConcatRef part = getSmsMessageWithConcatRef(sms);
+
+								if (part.msgCount > 1) {
+									try {
+										SmsMessageWithConcatRef[] parts = messages.get(part.refNumber);
+										if (parts == null) {
+											parts = new SmsMessageWithConcatRef[part.msgCount];
+											messages.put(part.refNumber, parts);
+										}
+
+										parts[part.seqNumber - 1] = part;
+									} catch (Exception e) {
+										Logger.warn("failed to handle multipart message");
+										broadcastMessage(context, sms.getOriginatingAddress(), sms.getMessageBody(), sms.getTimestampMillis());
+									}
+								} else {
+									broadcastMessage(context, sms.getOriginatingAddress(), sms.getMessageBody(), sms.getTimestampMillis());
+								}
 
 								if (!sms.getMessageClass().equals(SmsMessage.MessageClass.CLASS_0)) {
 									++ handled;
 								}
                             }
                         }
+
+						// concat multipart messages
+						for (int i = 0; i < messages.size(); ++ i) {
+							SmsMessageWithConcatRef[] parts = messages.valueAt(i);
+
+							String body = null;
+							String address = null;
+							long timestamp = 0;
+
+							for (SmsMessageWithConcatRef part : parts) {
+								if (part != null) {
+									if (body == null) {
+										body = part.smsMessage.getMessageBody();
+										address = part.smsMessage.getOriginatingAddress();
+										timestamp = part.smsMessage.getTimestampMillis();
+									} else {
+										body += part.smsMessage.getMessageBody();
+									}
+								}
+							}
+
+							broadcastMessage(context, address, body, timestamp);
+						}
 
                         // only abort broadcast if we've handled all messages within this intent
                         if (handled == pdus.length) {
@@ -96,5 +139,46 @@ public class MessageReceiverService extends IntentService {
 				}
 			}
 		}
+
+		private void broadcastMessage(Context context, String address, String body, long timestamp) {
+			Intent i = new Intent(context, MessageReceiverService.class);
+			i.putExtra(INTENT_EXTRA_ADDRESS, address);
+			i.putExtra(INTENT_EXTRA_MESSAGE, body);
+			i.putExtra(INTENT_EXTRA_TIMESTAMP, timestamp);
+			startWakefulService(context, i);
+		}
+
+		private SmsMessageWithConcatRef getSmsMessageWithConcatRef(SmsMessage smsMessage) {
+			SmsMessageWithConcatRef smsWithHeader = new SmsMessageWithConcatRef();
+			smsWithHeader.smsMessage = smsMessage;
+
+			try {
+				Field field = smsMessage.getClass().getField("mWrappedSmsMessage");
+				Object mWrappedSmsMessage = field.get(smsMessage);
+
+				Method getUserDataHeader = mWrappedSmsMessage.getClass().getMethod("getUserDataHeader");
+				Object userDataHeader = getUserDataHeader.invoke(mWrappedSmsMessage);
+
+				field = userDataHeader.getClass().getField("concatRef");
+				Object concatRef = field.get(userDataHeader);
+				Class clazz = concatRef.getClass();
+
+				smsWithHeader.msgCount = clazz.getField("msgCount").getInt(concatRef);
+				smsWithHeader.seqNumber = clazz.getField("seqNumber").getInt(concatRef);
+				smsWithHeader.refNumber = clazz.getField("refNumber").getInt(concatRef);
+			} catch (Exception e) {
+				Logger.warn("failed to get concatRef");
+			}
+
+			return smsWithHeader;
+		}
+	}
+
+	private static class SmsMessageWithConcatRef {
+		private SmsMessage smsMessage = null;
+
+		private int refNumber = 1;
+		private int seqNumber = 0;
+		private int msgCount = 1;
 	}
 }
