@@ -7,7 +7,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class LibDbHelper extends SQLiteOpenHelper {
 
 	private static final String DATABASE_NAME = "ccmplib.db";
-	private static final int DATABASE_VERSION = 4;
+	private static final int DATABASE_VERSION = 5;
 
 	private static LibDbHelper instance;
 
@@ -44,6 +44,14 @@ public class LibDbHelper extends SQLiteOpenHelper {
 		if (oldVersion <= 3 && newVersion > 3) {
 			addPriority(db);
 		}
+
+		if (oldVersion <= 3 && newVersion > 3) {
+			addPriority(db);
+		}
+
+		if (oldVersion <= 4 && newVersion > 4) {
+			updateMessageProperties(db);
+		}
     }
 
 	private void createMessagesTable(SQLiteDatabase db) {
@@ -63,7 +71,8 @@ public class LibDbHelper extends SQLiteOpenHelper {
 				"  response_for_id     INTEGER," +
                 "  push_parameter      TEXT," +
                 "  expired             INTEGER DEFAULT (0)," +
-				"  priority            INTEGER DEFAULT (-1)" +
+				"  priority            INTEGER DEFAULT (-1)," +
+				"  is_replyable        INTEGER DEFAULT (0)" +
 				")"
 		);
 	}
@@ -110,8 +119,22 @@ public class LibDbHelper extends SQLiteOpenHelper {
 						"  expired				INTEGER DEFAULT (0)"
 		);
 	}
+
 	private void addPriority(SQLiteDatabase db) {
 		db.execSQL("ALTER TABLE messages ADD  priority INTEGER DEFAULT (-1)"
+		);
+	}
+
+	private void updateMessageProperties(SQLiteDatabase db) {
+		db.execSQL("ALTER TABLE messages ADD  is_replyable INTEGER DEFAULT (0)"
+		);
+
+        db.execSQL("UPDATE messages SET account_id = (SELECT mp.account_id FROM messages mp WHERE" +
+                        " messages.response_for_id = mp._id) WHERE account_id = 0 OR account_id IS NULL"
+        );
+
+		db.execSQL("UPDATE messages SET is_replyable = (SELECT a.is_replyable FROM accounts a WHERE" +
+                        " messages.account_id = a._id) WHERE incoming = 1"
 		);
 	}
 }

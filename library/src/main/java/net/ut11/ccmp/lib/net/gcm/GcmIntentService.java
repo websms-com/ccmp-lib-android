@@ -7,10 +7,10 @@ import android.os.Bundle;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
 import net.ut11.ccmp.api.domain.DeviceInboxResponse;
-import net.ut11.ccmp.lib.db.AccountsDb;
 import net.ut11.ccmp.lib.db.Message;
 import net.ut11.ccmp.lib.net.api.endpoint.DeviceEndpoint;
 import net.ut11.ccmp.lib.net.api.response.ApiException;
+import net.ut11.ccmp.lib.util.AccountUpdateHelper;
 import net.ut11.ccmp.lib.util.Logger;
 import net.ut11.ccmp.lib.util.MessageUtil;
 
@@ -44,7 +44,8 @@ public class GcmIntentService extends IntentService {
 					if (messageId > 0) {
 						try {
 							DeviceInboxResponse resp = DeviceEndpoint.getMessage(messageId);
-                            AccountsDb.insert(resp.getAccountId(), resp.getReplyable(), resp.getSenderDisplayImage(), resp.getSenderDisplayName(), resp.getAccountTimestamp());
+                            AccountUpdateHelper.updateAccountData(resp.getAccountId(), resp.getAccountTimestamp());
+
 							Message msg = MessageUtil.getMessageFrom(resp);
 							MessageUtil.insertMessage(msg);
 						} catch (ApiException e) {
