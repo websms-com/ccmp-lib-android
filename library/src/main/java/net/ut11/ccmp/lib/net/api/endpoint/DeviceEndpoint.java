@@ -17,6 +17,7 @@ import net.ut11.ccmp.lib.net.api.request.DeviceCall;
 import net.ut11.ccmp.lib.net.api.request.DeviceClientConfigurationCall;
 import net.ut11.ccmp.lib.net.api.request.DeviceGetAttachmentCall;
 import net.ut11.ccmp.lib.net.api.request.DeviceInboxFetchCall;
+import net.ut11.ccmp.lib.net.api.request.DeviceInboxGetMessageCall;
 import net.ut11.ccmp.lib.net.api.request.DeviceOutboxCall;
 import net.ut11.ccmp.lib.net.api.request.DeviceRegistrationCall;
 import net.ut11.ccmp.lib.net.api.request.DeviceUploadAttachmentCall;
@@ -149,6 +150,21 @@ public class DeviceEndpoint {
 	public static DeviceInboxResponse getMessage(long messageId) throws ApiException {
 		DeviceInboxFetchCall call = new DeviceInboxFetchCall(getToken(), messageId);
 		ApiResponse<DeviceInboxResponse> response = call.post();
+
+		if (response.getResponseCode() == HttpURLConnection.HTTP_OK) {
+			return response.getResponseObject(DeviceInboxResponse.class);
+		}
+
+		throw new ApiException(response, null);
+	}
+
+	public static DeviceInboxResponse getMessage(long messageId, boolean fetch) throws ApiException {
+		if(fetch) {
+			return getMessage(messageId);
+		}
+
+		DeviceInboxGetMessageCall call = new DeviceInboxGetMessageCall(getToken(), messageId);
+		ApiResponse<DeviceInboxResponse> response = call.get();
 
 		if (response.getResponseCode() == HttpURLConnection.HTTP_OK) {
 			return response.getResponseObject(DeviceInboxResponse.class);
