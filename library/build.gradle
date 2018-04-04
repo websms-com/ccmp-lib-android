@@ -11,9 +11,13 @@ version = '1.1.9-SNAPSHOT'
 buildscript {
 	repositories {
 		mavenCentral()
+		jcenter()
+		maven {
+			url 'https://maven.google.com'
+		}
 	}
 	dependencies {
-		classpath 'com.android.tools.build:gradle:1.0.+'
+		classpath 'com.android.tools.build:gradle:3.0.1'
 	}
 }
 
@@ -24,7 +28,6 @@ repositories {
 
 android {
 	compileSdkVersion 19
-	buildToolsVersion "21.1.2"
 
 	defaultConfig {
 		minSdkVersion 9
