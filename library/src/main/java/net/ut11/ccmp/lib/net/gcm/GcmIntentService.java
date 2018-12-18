@@ -43,13 +43,15 @@ public class GcmIntentService extends IntentService {
 
 					if (messageId > 0) {
 						try {
-							DeviceInboxResponse resp = DeviceEndpoint.getMessage(messageId);
+							DeviceInboxResponse resp = DeviceEndpoint.getMessage(messageId, false);
                             AccountUpdateHelper.updateAccountData(resp.getAccountId(), resp.getAccountTimestamp());
 
 							Message msg = MessageUtil.getMessageFrom(resp);
-							MessageUtil.insertMessage(msg);
+							if(MessageUtil.insertMessage(msg)) {
+								DeviceEndpoint.getMessage(messageId, true);
+							}
 						} catch (ApiException e) {
-							Logger.error("failed to fetch message", e);
+							Logger.error("failed to get/fetch message", e);
 						}
 					}
 				}
