@@ -24,7 +24,6 @@ import net.ut11.ccmp.lib.net.api.request.DeviceUploadAttachmentCall;
 import net.ut11.ccmp.lib.net.api.request.DeviceVerifyCall;
 import net.ut11.ccmp.lib.net.api.response.ApiException;
 import net.ut11.ccmp.lib.net.api.response.ApiResponse;
-import net.ut11.ccmp.lib.net.gcm.GcmRegistration;
 import net.ut11.ccmp.lib.receiver.DeviceUpdateReceiver;
 import net.ut11.ccmp.lib.receiver.MessageReceiverService;
 import net.ut11.ccmp.lib.util.LibPreferences;
@@ -106,7 +105,12 @@ public class DeviceEndpoint {
 			prefs.setDeviceVerified(true);
 			DeviceUpdateReceiver.checkConnected(LibApp.getContext());
 			MessageReceiverService.setEnabled(true);
-			GcmRegistration.checkRegistration();
+
+			try {
+				DeviceEndpoint.updateDevice();
+			} catch (ApiException e) {
+				if (Logger.DEBUG) Logger.debug("device update failed");
+			}
 
 			return true;
 		}

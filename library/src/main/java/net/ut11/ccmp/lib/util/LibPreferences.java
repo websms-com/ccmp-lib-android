@@ -11,7 +11,6 @@ public class LibPreferences {
 	private static final String PREFERENCE_MSISDN = "msisdn";
 	private static final String PREFERENCE_DEVICE_TOKEN = "device_token";
 	private static final String PREFERENCE_DEVICE_VERIFIED = "device_verified";
-	private static final String PREFERENCE_GCM_APP_VERSION = "gcm_app_version";
 	private static final String PREFERENCE_GCM_REGISTRATION_ID = "gcm_registration_id";
 	private static final String PREFERENCE_GCM_NEEDS_DEVICE_UPDATE = "gcm_needs_device_update_push";
 	private static final String PREFERENCE_LAST_DEVICE_UPDATE_TIME = "last_device_update_time";
@@ -59,16 +58,6 @@ public class LibPreferences {
 
 	public boolean isRegistered() {
 		return getDeviceToken() != null && isDeviceVerified();
-	}
-
-	public int getGcmAppVersion() {
-		return preferences.getInt(PREFERENCE_GCM_APP_VERSION, 0);
-	}
-
-	public void setGcmAppVersion(int version) {
-		SharedPreferences.Editor editor = preferences.edit();
-		editor.putInt(PREFERENCE_GCM_APP_VERSION, version);
-		editor.commit();
 	}
 
 	public String getGcmRegistrationId() {

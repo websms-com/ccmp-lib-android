@@ -9,7 +9,6 @@ import net.ut11.ccmp.lib.LibApp;
 import net.ut11.ccmp.lib.db.Message;
 import net.ut11.ccmp.lib.net.api.endpoint.DeviceEndpoint;
 import net.ut11.ccmp.lib.net.api.response.ApiException;
-import net.ut11.ccmp.lib.net.gcm.GcmRegistration;
 import net.ut11.ccmp.lib.util.AccountUpdateHelper;
 import net.ut11.ccmp.lib.util.LibPreferences;
 import net.ut11.ccmp.lib.util.Logger;
@@ -45,6 +44,13 @@ public class InboxUpdateService extends IntentService {
 			Logger.warn("failed to update messages");
 		}
 
-		GcmRegistration.checkRegistration();
+		LibPreferences prefs = LibApp.getLibPreferences();
+		if (prefs.gcmNeedsDeviceUpdate()) {
+			try {
+				DeviceEndpoint.updateDevice();
+			} catch (ApiException e) {
+				if (Logger.DEBUG) Logger.debug("device update failed");
+			}
+		}
 	}
 }
