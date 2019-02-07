@@ -11,7 +11,6 @@ import android.net.NetworkInfo;
 import net.ut11.ccmp.lib.LibApp;
 import net.ut11.ccmp.lib.net.api.endpoint.DeviceEndpoint;
 import net.ut11.ccmp.lib.net.api.response.ApiException;
-import net.ut11.ccmp.lib.net.gcm.GcmRegistration;
 import net.ut11.ccmp.lib.util.Logger;
 
 public class DeviceUpdateReceiver extends BroadcastReceiver {
@@ -78,8 +77,6 @@ public class DeviceUpdateReceiver extends BroadcastReceiver {
 		new Thread() {
 			@Override
 			public void run() {
-				GcmRegistration.checkRegistration();
-
 				try {
 					DeviceEndpoint.updateClientConfiguration();
 					DeviceEndpoint.updateDevice();

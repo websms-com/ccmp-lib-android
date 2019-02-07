@@ -2,29 +2,31 @@ apply plugin: 'com.android.application'
 
 buildscript {
 	repositories {
-		mavenCentral()
+		google()
 		jcenter()
-		maven {
-			url 'https://maven.google.com'
-		}
-	}
+    }
 	dependencies {
-		classpath 'com.android.tools.build:gradle:3.0.1'
+		classpath 'com.android.tools.build:gradle:3.2.1'
 	}
 }
 
 dependencies {
-	compile project(':library')
+	implementation project(':library')
+	implementation files('../library/libs/ccmp-client.jar')
 }
 
 android {
-	compileSdkVersion 19
+	compileSdkVersion 22
 
 	defaultConfig {
-		minSdkVersion 10
-		targetSdkVersion 19
+		minSdkVersion 14
+		targetSdkVersion 22
 
         versionCode 1
         versionName "1.0"
+	}
+
+	lintOptions {
+		disable 'ExpiredTargetSdkVersion'
 	}
 }
