@@ -16,17 +16,19 @@ dependencies {
 }
 
 android {
-	compileSdkVersion 22
+	compileSdkVersion 26
 
 	defaultConfig {
 		minSdkVersion 14
-		targetSdkVersion 22
+		targetSdkVersion 26
 
         versionCode 1
         versionName "1.0"
 	}
 
+	useLibrary 'org.apache.http.legacy'
+
 	lintOptions {
-		disable 'ExpiredTargetSdkVersion'
+
 	}
 }
