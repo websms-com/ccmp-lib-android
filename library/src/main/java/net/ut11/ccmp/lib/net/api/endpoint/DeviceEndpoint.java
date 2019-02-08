@@ -25,7 +25,6 @@ import net.ut11.ccmp.lib.net.api.request.DeviceVerifyCall;
 import net.ut11.ccmp.lib.net.api.response.ApiException;
 import net.ut11.ccmp.lib.net.api.response.ApiResponse;
 import net.ut11.ccmp.lib.receiver.DeviceUpdateReceiver;
-import net.ut11.ccmp.lib.receiver.MessageReceiverService;
 import net.ut11.ccmp.lib.util.LibPreferences;
 import net.ut11.ccmp.lib.util.Logger;
 
@@ -51,8 +50,6 @@ public class DeviceEndpoint {
 
 		updateClientConfiguration();
 
-		MessageReceiverService.setEnabled(false);
-
 		DeviceRegistrationRequest req = new DeviceRegistrationRequest();
 		req.setMsisdn(msisdn);
 
@@ -72,8 +69,6 @@ public class DeviceEndpoint {
 
     public static boolean registerDevice(String pushId) throws ApiException {
         updateClientConfiguration();
-
-        MessageReceiverService.setEnabled(false);
 
         DeviceRegistrationRequest req = new DeviceRegistrationRequest();
         req.setPushId(pushId);
@@ -104,7 +99,6 @@ public class DeviceEndpoint {
 			LibPreferences prefs = LibApp.getLibPreferences();
 			prefs.setDeviceVerified(true);
 			DeviceUpdateReceiver.checkConnected(LibApp.getContext());
-			MessageReceiverService.setEnabled(true);
 
 			try {
 				DeviceEndpoint.updateDevice();
