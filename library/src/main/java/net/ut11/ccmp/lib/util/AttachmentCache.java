@@ -257,6 +257,7 @@ public class AttachmentCache {
                         }
 
                         Intent intent = new Intent(INTENT_ACTION_ATTACHMENT_DOWNLOADED);
+                        intent.setPackage(LibApp.getContext().getPackageName());
                         intent.putExtra(INTENT_EXTRA_ATTACHMENT_ID, attachmentId);
                         LibApp.getContext().sendBroadcast(intent);
                     }
@@ -284,6 +285,7 @@ public class AttachmentCache {
                 response = DeviceEndpoint.getAttachment((int) attachmentId);
                 AttachmentsDb.insert(response.getId(), response.getUri(), response.getName(), response.getMimeType(), response.getSize());
                 Intent intent = new Intent(INTENT_ACTION_ATTACHMENT_INSERTED);
+                intent.setPackage(LibApp.getContext().getPackageName());
                 intent.putExtra(INTENT_EXTRA_ATTACHMENT_ID, attachmentId);
                 LibApp.getContext().sendBroadcast(intent);
             } catch (ApiException e) {

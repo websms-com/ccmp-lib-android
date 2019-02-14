@@ -39,6 +39,7 @@ public class CcmpFcmMessagingService extends FirebaseMessagingService {
             }
 
             Intent i = new Intent(INTENT_GCM_REGISTRATION_SUCCESSFUL);
+            i.setPackage(context.getPackageName());
             LocalBroadcastManager.getInstance(context).sendBroadcast(i);
 
         } catch (ApiException e) {

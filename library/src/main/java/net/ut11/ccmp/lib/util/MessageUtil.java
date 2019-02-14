@@ -274,6 +274,7 @@ public class MessageUtil {
 		i.putExtra(INTENT_EXTRA_MESSAGE_ID, msgId);
 		i.putExtra(INTENT_EXTRA_MESSAGE_READ, read);
 		i.putExtra(INTENT_EXTRA_MESSAGE_ACCOUNT_ID, accountId);
+		i.setPackage(LibApp.getContext().getPackageName());
 		LibApp.getContext().sendBroadcast(i);
 	}
 
@@ -281,6 +282,7 @@ public class MessageUtil {
 		Intent i = new Intent(INTENT_MESSAGE_UPDATED);
 		i.putExtra(INTENT_EXTRA_MESSAGE_ID, msgId);
 		i.putExtra(INTENT_EXTRA_MESSAGE_READ, read);
+		i.setPackage(LibApp.getContext().getPackageName());
 		LibApp.getContext().sendBroadcast(i);
 	}
 }

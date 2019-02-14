@@ -78,7 +78,9 @@ public class AccountCache {
                         Account account = cache.get(accountId);
                         if (account != null) {
                             account.setAvatar(BitmapFactory.decodeByteArray(avatar, 0, avatar.length));
-                            LibApp.getContext().sendBroadcast(new Intent(INTENT_ACTION_ACCOUNT_DATA_UPDATED));
+                            Intent i = new Intent(INTENT_ACTION_ACCOUNT_DATA_UPDATED);
+                            i.setPackage(LibApp.getContext().getPackageName());
+                            LibApp.getContext().sendBroadcast(i);
                         }
                     }
                 }

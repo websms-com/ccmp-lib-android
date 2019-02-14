@@ -63,6 +63,7 @@ public class DeviceUpdateReceiver extends BroadcastReceiver {
 	}
 
 	private static PendingIntent getUpdatePendingIntent(Context context) {
+		updateIntent.setPackage(context.getPackageName());
 		return PendingIntent.getBroadcast(context, 0, updateIntent, 0);
 	}
 

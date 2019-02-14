@@ -78,6 +78,7 @@ public class PinSmsBroadcastReceiver extends BroadcastReceiver {
 
     private static void sendPinReceivedBroadcast(Context context, String pin) {
         Intent i = new Intent(INTENT_VERIFICATION_PIN_RECEIVED);
+        i.setPackage(context.getPackageName());
         i.putExtra(INTENT_EXTRA_PIN, pin);
 
         LocalBroadcastManager.getInstance(context).sendBroadcast(i);
