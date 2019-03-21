@@ -6,47 +6,49 @@ apply plugin: 'maven'
 
 group = 'net.ut11.ccmp'
 archivesBaseName = 'ccmp-lib'
-version = '1.1.9-SNAPSHOT'
+version = '1.2.1-SNAPSHOT'
 
 buildscript {
 	repositories {
-		mavenCentral()
+		google()
 		jcenter()
-		maven {
-			url 'https://maven.google.com'
-		}
 	}
 	dependencies {
-		classpath 'com.android.tools.build:gradle:3.0.1'
+		classpath 'com.android.tools.build:gradle:3.2.1'
 	}
 }
 
 repositories {
-    mavenCentral()
-    mavenLocal()
+	google()
+	jcenter()
 }
 
 android {
-	compileSdkVersion 19
+	compileSdkVersion 26
 
 	defaultConfig {
-		minSdkVersion 9
-		targetSdkVersion 19
+		minSdkVersion 14
+		targetSdkVersion 26
 		versionName = version
 	}
+
+	useLibrary 'org.apache.http.legacy'
 
     lintOptions {
         abortOnError false
         absolutePaths false
         lintConfig file("lint.xml")
+
     }
 }
 
 dependencies {
-	compile 'com.google.android.gms:play-services:4.3.+'
-	compile 'com.android.support:support-v4:19.1.+'
-	compile files('libs/ccmp-client.jar')
-    compile files('libs/disklrucache-2.0.2.jar')
+    implementation "com.google.firebase:firebase-messaging:17.3.0"
+	implementation 'com.android.support:support-v4:26.1.+'
+	implementation files('libs/ccmp-client.jar')
+    implementation files('libs/disklrucache-2.0.2.jar')
+	implementation 'com.google.android.gms:play-services-auth:15.0.1'
+
 }
 
 if (!hasProperty('uploadRepositoryUri')) project.ext.uploadRepositoryUri = ''

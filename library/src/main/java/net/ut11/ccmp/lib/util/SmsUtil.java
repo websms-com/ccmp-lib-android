@@ -42,7 +42,7 @@ public class SmsUtil {
 		for (int i = 0; i < bodyParts.size(); ++ i) {
 			Intent sentIntent = new Intent(SentReceiverThread.INTENT_ACTION_SMS_SENT, Uri.parse(scheme + "://" + i));
 			sentIntent.putExtra(SentReceiverThread.INTENT_EXTRA_LAST_PART, i == bodyParts.size() - 1);
-
+			sentIntent.setPackage(context.getPackageName());
 			sentIntents.add(PendingIntent.getBroadcast(context, 0, sentIntent, 0));
 		}
 

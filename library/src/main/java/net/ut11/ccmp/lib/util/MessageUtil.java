@@ -1,6 +1,9 @@
 package net.ut11.ccmp.lib.util;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
+import android.os.Build;
 
 import net.ut11.ccmp.api.domain.DeviceInboxResponse;
 import net.ut11.ccmp.lib.LibApp;
@@ -209,7 +212,7 @@ public class MessageUtil {
 	}
 
 	/**
-	 * sends and stores a message.
+	 * sends and stores a message. Messages sent asSms (via smsIntent) are not persisted
 	 * @param recipient the recipient
 	 * @param message the message
 	 * @param asSms send message as sms
@@ -225,7 +228,18 @@ public class MessageUtil {
 		}
 
 		if (asSms) {
-			success = SmsUtil.sendSms(recipient, message);
+			Intent smsIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("sms:"));
+			smsIntent.putExtra("sms_body", message);
+			smsIntent.putExtra("address", recipient);
+			smsIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+			if(android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+				smsIntent.setType("vnd.android-dir/mms-sms");
+			}
+			if (smsIntent.resolveActivity(LibApp.getContext().getPackageManager()) != null) {
+				LibApp.getContext().startActivity(smsIntent);
+			} else {
+				Logger.warn("No application found that can handle sms messages");
+			}
 		} else {
 			try {
 				DeviceEndpoint.sendMessage(recipient, message, attachmentId);
@@ -233,23 +247,23 @@ public class MessageUtil {
 			} catch (ApiException e) {
 				Logger.warn("failed to send ip message: " + e.getResponseCode());
 			}
-		}
 
-		if (success) {
-			Message msg = new Message();
-			msg.setIncoming(false);
-			msg.setIsSms(asSms);
-			msg.setDateSent(System.currentTimeMillis());
-			msg.setRead(true);
-			msg.setAddress(recipient);
-			msg.setMessage(message);
-			msg.setResponseForId(msgToRespond == null ? 0 : msgToRespond.getId());
-			msg.setAccountId(msgToRespond == null ? 0 : msgToRespond.getAccountId());
+			if (success) {
+				Message msg = new Message();
+				msg.setIncoming(false);
+				msg.setIsSms(asSms);
+				msg.setDateSent(System.currentTimeMillis());
+				msg.setRead(true);
+				msg.setAddress(recipient);
+				msg.setMessage(message);
+				msg.setResponseForId(msgToRespond == null ? 0 : msgToRespond.getId());
+				msg.setAccountId(msgToRespond == null ? 0 : msgToRespond.getAccountId());
 
-			MessagesDb.saveMessage(msg);
-			broadcastMessageInserted(msg.getId(), true, msg.getAccountId());
+				MessagesDb.saveMessage(msg);
+				broadcastMessageInserted(msg.getId(), true, msg.getAccountId());
 
-			return msg;
+				return msg;
+			}
 		}
 
 		return null;
@@ -260,6 +274,7 @@ public class MessageUtil {
 		i.putExtra(INTENT_EXTRA_MESSAGE_ID, msgId);
 		i.putExtra(INTENT_EXTRA_MESSAGE_READ, read);
 		i.putExtra(INTENT_EXTRA_MESSAGE_ACCOUNT_ID, accountId);
+		i.setPackage(LibApp.getContext().getPackageName());
 		LibApp.getContext().sendBroadcast(i);
 	}
 
@@ -267,6 +282,7 @@ public class MessageUtil {
 		Intent i = new Intent(INTENT_MESSAGE_UPDATED);
 		i.putExtra(INTENT_EXTRA_MESSAGE_ID, msgId);
 		i.putExtra(INTENT_EXTRA_MESSAGE_READ, read);
+		i.setPackage(LibApp.getContext().getPackageName());
 		LibApp.getContext().sendBroadcast(i);
 	}
 }
