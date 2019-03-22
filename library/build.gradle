@@ -81,7 +81,7 @@ task checkstyle(type: Checkstyle) {
 task findbugs(type: FindBugs) {
     excludeFilter file('../findbugs-filter.xml')
     ignoreFailures true
-    classes = fileTree('build/intermediates/classes/release')
+    classes = fileTree('build/intermediates/javac')
     source = fileTree('src/main/java/')
     classpath = files( )
     effort = 'max'
