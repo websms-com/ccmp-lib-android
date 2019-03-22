@@ -154,9 +154,6 @@
             <property name="ignoreNumbers" value="-1, 0, 0.5, 1, 10, 100, 1000"/>
         </module>
 		<module name="MissingSwitchDefault" />
-		<module name="RedundantThrows">
-			<property name="suppressLoadErrors" value="true" />
-		</module>
 		<module name="SimplifyBooleanExpression" />
 		<module name="SimplifyBooleanReturn" />
 
